@@ -40,7 +40,6 @@ module AssetSync
       return unless AssetSync.enabled?
 
       errors = config.valid? ? "" : config.errors.full_messages.join(', ')
-
       if !(config && config.valid?)
         if config.fail_silently?
           self.warn(errors)

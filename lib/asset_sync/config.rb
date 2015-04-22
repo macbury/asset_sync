@@ -19,7 +19,7 @@ module AssetSync
     attr_accessor :run_on_precompile
     attr_accessor :invalidate
     attr_accessor :cdn_distribution_id
-
+    attr_accessor :openstack_config
     # FOG configuration
     attr_accessor :fog_provider          # Currently Supported ['AWS', 'Rackspace']
     attr_accessor :fog_directory         # e.g. 'the-bucket-name'
@@ -101,6 +101,10 @@ module AssetSync
       enabled == true
     end
 
+    def open_stack?
+      fog_provider == 'OpenStack'
+    end
+
     def rackspace?
       fog_provider == 'Rackspace'
     end
@@ -177,7 +181,9 @@ module AssetSync
 
     def fog_options
       options = { :provider => fog_provider }
-      if aws?
+      if open_stack?
+        options.merge!(openstack_config)
+      elsif aws?
         if aws_iam?
           options.merge!({
             :use_iam_profile => true
